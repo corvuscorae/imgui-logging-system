@@ -4,167 +4,215 @@
 #include <vector>
 #include <cstring>
 
-namespace ClassGame {
-        //
-        // our global variables
-        //
-        struct LogItem{
-            const char* level;
-            const char* dat;
-            const char* type = NULL;
+namespace ClassGame
+{
+    //
+    // our global variables
+    //
+    struct LogItem
+    {
+        const char *level;
+        const char *dat;
+        const char *type = NULL;
+        ImVec4 color;
 
-            LogItem(const char* _level, const char* _dat) {
-                level = _level;
-                dat = _dat;
-            }
-
-            LogItem(const char* _level, const char* _dat, const char* _type) {
-                level = _level;
-                dat = _dat;
-                type = _type;
-            }
-
-            std::string print(){
-                std::string message = "[" + std::string(level) + "] ";
-                
-                if(type){
-                    message += "[" + std::string(type) + "] ";
-                }
-
-                message += dat;
-                
-                return message;
-            }
-        };
-
-        // singleton pattern class for logging
-        class Logger{
-            private:
-                Logger() = default;
-                std::vector<LogItem> log;
-                
-            public:
-                int log_size = 0;
-
-                const char* levels [3] = {
-                    "INFO", 
-                    "WARN",
-                    "ERROR"
-                };
-
-                static Logger& GetInstance(){
-                    static Logger instance;
-                    
-                    return instance;
-                }
-
-                void LogInfo(const char* message, int level = 0){
-                    // TEMP: test code
-                    LogItem new_item(levels[level], message);
-                    log.push_back(new_item);
-
-                    std::cout << new_item.print() << std::endl;
-                    log_size++;
-                }
-
-                void LogGameEvent(const char* message, int level = 0){
-                    // TEMP: test code
-                    LogItem new_item(levels[level], message, "GAME");
-                    log.push_back(new_item);
-                 
-                    std::cout << new_item.print() << std::endl;
-                    log_size++;
-                }
-
-                void clear(){
-                    log.clear();
-                    log_size = 0;
-                }
-
-                std::string print_last(){
-                    return log.back().print();
-                }
-
-                std::string print(int i){
-                    return log.at(i).print();
-                }
-        };
-
-        // Initialize logging system
-        Logger& logger = Logger::GetInstance();
-
-        //
-        // game starting point
-        // this is called by the main render loop in main.cpp
-        //
-
-        void GameStartUp() 
+        LogItem(const char *_level, const char *_dat, ImVec4 _col)
         {
-           logger.LogInfo("Game started successfully");
-           logger.LogGameEvent("Application initialized");
+            level = _level;
+            dat = _dat;
+            color = _col;
         }
 
-        //
-        // game render loop
-        // this is called by the main render loop in main.cpp
-        //
-        void RenderGame() 
+        LogItem(const char *_level, const char *_dat, const char *_type, ImVec4 _col)
         {
-            ImGui::DockSpaceOverViewport();
-            ImGui::ShowDemoWindow();
+            level = _level;
+            dat = _dat;
+            type = _type;
+            color = _col;
+        }
 
-            ImGui::Begin("ImGui Log Demo");
-            ImGui::LogButtons();
+        std::string print()
+        {
+            std::string message = "[" + std::string(level) + "] ";
 
-            if (ImGui::Button("Copy \"Hello, world!\" to clipboard"))
+            if (type)
             {
-                ImGui::LogToClipboard();
-                ImGui::LogText("Hello, world!");
-                ImGui::LogFinish();
-            }
-            ImGui::End();
-
-            // TESTING
-            static float f = 0.0f;
-            static int counter = 0;
-            ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-            ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-
-            //--- GAME LOG ---//
-            ImGui::Begin("Game Log");
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-
-            if(ImGui::Button("Clear")){
-                logger.clear(); // ???
-            }
-            ImGui::SameLine();
-            if(ImGui::Button("Test Info")){
-               logger.LogInfo("This is test info.", 0);
-            } 
-            ImGui::SameLine();
-            if(ImGui::Button("Test Warn")){
-               logger.LogInfo("This is a test warning.", 1);
-            } 
-            ImGui::SameLine();
-            if(ImGui::Button("Test Error")){
-               logger.LogInfo("This is a test error.", 2);
-            } 
-
-
-            for(int i = 0; i < logger.log_size; i++){
-                ImGui::Text(logger.print(i).c_str());
+                message += "[" + std::string(type) + "] ";
             }
 
-            ImGui::End();
+            message += dat;
+
+            return message;
         }
+    };
 
-        //
-        // end turn is called by the game code at the end of each turn
-        // this is where we check for a winner
-        //
-        void EndOfTurn() 
+    // singleton pattern class for logging
+    class Logger
+    {
+    private:
+        Logger() = default;
+        std::vector<LogItem> log;
+
+    public:
+        int log_size = 0;
+
+        const char *level[3] = {
+            "INFO",
+            "WARN",
+            "ERROR"
+        };
+
+        const ImVec4 color[3] = {
+            ImVec4(1,1,1,1),
+            ImVec4(1,1,0,1),
+            ImVec4(1,0,0,1)
+        };
+
+        static Logger &GetInstance()
         {
+            static Logger instance;
+
+            return instance;
         }
+
+        void LogInfo(const char *message, int lvl = 0)
+        {
+            // TEMP: test code
+            LogItem new_item(level[lvl], message, color[lvl]);
+            log.push_back(new_item);
+
+            std::cout << new_item.print() << std::endl;
+            log_size++;
+        }
+
+        void LogGameEvent(const char *message, int lvl = 0)
+        {
+            // TEMP: test code
+            LogItem new_item(level[lvl], message, "GAME", color[lvl]);
+            log.push_back(new_item);
+
+            std::cout << new_item.print() << std::endl;
+            log_size++;
+        }
+
+        void clear()
+        {
+            log.clear();
+            log_size = 0;
+        }
+
+        LogItem get(int i)
+        {
+            return log.at(i);
+        }
+
+        std::string print_last()
+        {
+            return log.back().print();
+        }
+
+        std::string print(int i)
+        {
+            return log.at(i).print();
+        }
+    };
+
+    // Initialize logging system
+    Logger &logger = Logger::GetInstance();
+
+    //
+    // game starting point
+    // this is called by the main render loop in main.cpp
+    //
+
+    void GameStartUp()
+    {
+        logger.LogInfo("Game started successfully");
+        logger.LogGameEvent("Application initialized");
+    }
+
+    //
+    // game render loop
+    // this is called by the main render loop in main.cpp
+    //
+    void RenderGame()
+    {
+        ImGui::DockSpaceOverViewport();
+
+        //-- DEMO WINDOW --//
+        ImGui::ShowDemoWindow();
+
+        //-- LOG DEMO WINDOW --//
+        ImGui::Begin("ImGui Log Demo");
+        ImGui::LogButtons();
+
+        if (ImGui::Button("Copy \"Hello, world!\" to clipboard"))
+        {
+            ImGui::LogToClipboard();
+            ImGui::LogText("Hello, world!");
+            ImGui::LogFinish();
+        }
+        ImGui::End();
+
+        //-- GAME CONTROL WINDOW --//
+        ImGui::Begin("Game Control");
+
+        ImGui::Text("This is the game control panel");
+
+        if (ImGui::Button("Log Event"))
+        {
+            logger.LogGameEvent("This is a test event.", 0);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Log Game Warn"))
+        {
+            logger.LogGameEvent("This is a test game warning.", 1);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Log Game Error"))
+        {
+            logger.LogGameEvent("This is a test game error.", 2);
+        }
+
+        ImGui::End();
+
+        //--- GAME LOG WINDOW ---//
+        ImGui::Begin("Game Log");
+
+        if (ImGui::Button("Clear"))
+        {
+            logger.clear(); // ???
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Test Info"))
+        {
+            logger.LogInfo("This is test info.", 0);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Test Warn"))
+        {
+            logger.LogInfo("This is a test warning.", 1);
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Test Error"))
+        {
+            logger.LogInfo("This is a test error.", 2);
+        }
+
+        for (int i = 0; i < logger.log_size; i++)
+        {
+            ImVec4 text_color = logger.get(i).color;
+            ImGui::TextColored(text_color, logger.print(i).c_str());
+        }
+
+        ImGui::End();
+    }
+
+    //
+    // end turn is called by the game code at the end of each turn
+    // this is where we check for a winner
+    //
+    void EndOfTurn()
+    {
+    }
 }
