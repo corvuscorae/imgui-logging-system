@@ -19,6 +19,9 @@
     <ClCompile Include="C:\Users\raven\OneDrive\Desktop\.123\imgui-starter\imgui\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\raven\OneDrive\Desktop\.123\imgui-starter\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\raven\OneDrive\Desktop\.123\imgui-starter\imgui\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

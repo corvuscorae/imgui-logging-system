@@ -1,12 +1,6 @@
 #include "Application.h"
 #include "imgui/imgui.h"
-#include <iostream>
-#include <vector>
-#include <cstring>
-#include <fstream>
-#include <iomanip>
-#include <ctime>
-#include <sstream>
+#include "Logger.h"
 
 namespace ClassGame
 {
@@ -21,142 +15,6 @@ namespace ClassGame
     bool log_to_console = true;
     bool log_to_file = false;
 
-    struct LogItem
-    {
-        const char *level;
-        const char *dat;
-        const char *type = NULL;
-        ImVec4 color;
-
-        LogItem(const char *_level, const char *_dat, ImVec4 _col)
-        {
-            level = _level;
-            dat = _dat;
-            color = _col;
-        }
-
-        LogItem(const char *_level, const char *_dat, const char *_type, ImVec4 _col)
-        {
-            level = _level;
-            dat = _dat;
-            type = _type;
-            color = _col;
-        }
-
-        std::string print()
-        {
-            std::string message = "[" + std::string(level) + "] ";
-
-            if (type)
-            {
-                message += "[" + std::string(type) + "] ";
-            }
-
-            message += dat;
-
-            return message;
-        }
-    };
-
-    // singleton pattern class for logging
-    class Logger
-    {
-    private:
-        Logger() = default;
-        std::vector<LogItem> log;
-        std::ofstream file;
-        std::string filename;
-
-    public:
-        int log_size = 0;
-        bool to_console_enabled = true;
-
-        const char *level[3] = {
-            "INFO",
-            "WARN",
-            "ERROR"
-        };
-
-        const ImVec4 color[3] = {
-            ImVec4(1,1,1,1),
-            ImVec4(1,1,0,1),
-            ImVec4(1,0,0,1)
-        };
-
-        static Logger &GetInstance()
-        {
-            static Logger instance;
-            return instance;
-        }
-
-        void ToggleConsoleLog(bool b){
-            to_console_enabled = b;
-        }
-
-        void WriteLogToFile(const std::string &_filename = "game_log.txt"){
-            // OPEN FILE
-            if(file.is_open()){
-                file.close();
-            }
-
-            filename = _filename;
-            file.open(filename, std::ios::out);
-
-            // WRITE 
-            if(file.is_open()){
-                for(int i = 0; i < log.size(); i++){
-                    file << log.at(i).print() << "\n";
-                }
-                file.flush();
-            }
-        }
-
-        void LogInfo(const char *message, int lvl = 0)
-        {
-            LogItem new_item(level[lvl], message, color[lvl]);
-            log.push_back(new_item);
-
-            if(to_console_enabled){
-                std::cout << new_item.print() << std::endl;
-            }
-
-            log_size++;
-        }
-
-        void LogGameEvent(const char *message, int lvl = 0)
-        {
-            LogItem new_item(level[lvl], message, "GAME", color[lvl]);
-            log.push_back(new_item);
-
-            if(to_console_enabled){
-                std::cout << new_item.print() << std::endl;
-            }
-
-            log_size++;
-        }
-
-        void clear()
-        {
-            log.clear();
-            log_size = 0;
-        }
-
-        LogItem get(int i)
-        {
-            return log.at(i);
-        }
-
-        std::string print_last()
-        {
-            return log.back().print();
-        }
-
-        std::string print(int i)
-        {
-            return log.at(i).print();
-        }
-    };
-
     // Initialize logging system
     Logger &logger = Logger::GetInstance();
 
@@ -164,7 +22,6 @@ namespace ClassGame
     // game starting point
     // this is called by the main render loop in main.cpp
     //
-
     void GameStartUp()
     {
         logger.LogInfo("Game started successfully");
