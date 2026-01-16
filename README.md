@@ -8,6 +8,17 @@ After I got a basic Logger class made, I moved on to stylizing outputs with diff
 
 The most challenging thing so far was trying to figure out how to write the log to a file. Originally, I expected to use a tool from the ImGui library, but I wound up using the Standard Library instead.
 
+### Minimums
+* [x] Logs to console
+    - by default
+    - setting can be toggled: Game Control window > `log options` > `console`
+* [x] Logs to file
+    - Game Control window > `log options` > `file` 
+* [x] Contains levels of logging
+    - `INFO`, `WARN`, and `ERROR`
+* [x] Can set level of log to console
+    - yes, using enum (i.e. `logging.WARN`)
+
 ### TODO/Future Improvements
 * [ ] revisit using ImGui tools for file output.
 * [ ] add timestamps to log files
