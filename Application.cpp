@@ -34,11 +34,21 @@ namespace ClassGame
     //
     void RenderGame()
     {
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-
         ImGui::DockSpaceOverViewport();
 
-        //-- GAME CONTROL WINDOW --//
+        PutGameControlPanel();  // game control panel window
+        PutGameLogWindow();     // game logs
+        PutImguiLogDemo();      // imgui log demo
+
+        if(show_imgui_demo){    // imgui demo
+            ImGui::ShowDemoWindow(&show_imgui_demo);
+        }
+    }
+
+    //-- GAME CONTROL WINDOW --//
+    void PutGameControlPanel(){
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+
         ImGui::Begin("Game Control", &show_game_panel, ImGuiWindowFlags_MenuBar);
 
         ImGui::Text("This is the game control panel");
@@ -84,8 +94,10 @@ namespace ClassGame
         ImGui::Checkbox("Imgui Log Demo", &show_log_demo);
 
         ImGui::End();
+    }
 
-         //--- GAME LOG WINDOW ---//
+    //--- GAME LOG WINDOW ---//
+    void PutGameLogWindow(){
         if(show_game_log){
             ImGui::Begin("Game Log", &show_game_log);
 
@@ -122,12 +134,10 @@ namespace ClassGame
             ImGui::End();
         }
 
-        //-- DEMO WINDOW --//
-        if(show_imgui_demo){
-            ImGui::ShowDemoWindow(&show_imgui_demo);
-        }
+    }
 
-        //-- LOG DEMO WINDOW --//
+    //-- LOG DEMO WINDOW --//
+    void PutImguiLogDemo(){
         if(show_log_demo){
             ImGui::Begin("ImGui Log Demo", &show_log_demo);
 

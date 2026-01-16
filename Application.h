@@ -9,4 +9,9 @@ namespace ClassGame {
     void ShowLogWindow(bool* p_open = nullptr);
     void ToggleLogWindow();
     bool IsLogWindowVisible();
+
+    // Added separate window functions for readability
+    void PutGameControlPanel();  
+    void PutGameLogWindow();     
+    void PutImguiLogDemo(); 
 }
